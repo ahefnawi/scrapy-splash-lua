@@ -6,7 +6,6 @@ from scrapy.crawler import CrawlerProcess
 from scrapy_splash import SplashRequest
 
 
-
 class HefnaSpiderSpider(scrapy.Spider):
     name = 'hefna_spider'
     allowed_domains = ['kiliim.com']
@@ -55,20 +54,20 @@ class HefnaSpiderSpider(scrapy.Spider):
     script = """
             function main(splash)
                 splash:init_cookies(splash.args.cookies)
-		splash:go('https://kiliim.com/product/blue-nile-cushion/')
+		        splash:go('https://kiliim.com/product/blue-nile-cushion/')
                 splash:wait(2)
-		local button = splash:select('button.single_add_to_cart_button')
-		button:mouse_click()
+		        local button = splash:select('button.single_add_to_cart_button')
+		        button:mouse_click()
                 splash:wait(1.5)
-		splash:go('https://kiliim.com/checkout/')
-		splash:wait(1.5)
+		        splash:go('https://kiliim.com/checkout/')
+		        splash:wait(1.5)
                 local select_go = splash:select('#s2id_billing_country')
                 select_go:mouse_click()
                 local country = splash:select('#s2id_autogen1_search')
                 country:send_text("France")
                 country:send_keys("<Return>")
                 splash:wait(1.5)
-		splash:go('https://kiliim.com/product/blue-nile-cushion/')
+		        splash:go('https://kiliim.com/product/blue-nile-cushion/')
                 splash:wait(1.5)
 
                 local entries = splash:history()
@@ -82,13 +81,15 @@ class HefnaSpiderSpider(scrapy.Spider):
                 }
             end
             """
-# 		return splash:evaljs('document.querySelectorAll("span.woocommerce-Price-currencySymbol")[0].innerHTML')
+
+    # return splash:evaljs('document.querySelectorAll("span.woocommerce-Price-currencySymbol")[0].innerHTML')
 
     def start_requests(self):
         for url in self.start_urls:
             yield SplashRequest(url, self.parse, endpoint='execute',
-                            args={'lua_source': self.script})
+                                args={'lua_source': self.script})
 
     def parse(self, response):
-        titles = response.css('.product-title').xpath('text()').extract()
-        yield {'product_titles': titles, 'test_body': response.body_as_unicode()}
+        inspect_response(response, self)
+        #titles = response.css('.product-title').xpath('text()').extract()
+        #yield {'product_titles': titles, 'test_body': response.body_as_unicode()}

@@ -54,19 +54,19 @@ class HefnaSpiderSpider(scrapy.Spider):
 
     script = """
             function main(splash)
-		splash:go('https://kiliim.com/product/blue-nile-cushion/')
-		local button = splash:select('button.single_add_to_cart_button')
-		button:mouse_click()
-		splash:go('https://kiliim.com/checkout/')
-		splash:wait(1.5)
-		local select_input = splash:select('#s2id_billing_country')
-		select_input:mouse_click()
-		local country = splash:select('input[id=s2id_autogen1_search]')
-		country:send_text("France")
-		country:send_keys("<Return>")
-		splash:wait(0.5)
-		splash:go('https://kiliim.com/product/blue-nile-cushion/')
-		splash:wait(1.5)
+                splash:go('https://kiliim.com/product/blue-nile-cushion/')
+                local button = splash:select('button.single_add_to_cart_button')
+                button:mouse_click()
+                splash:go('https://kiliim.com/checkout/')
+                splash:wait(1.5)
+                local select_input = splash:select('#s2id_billing_country')
+                select_input:mouse_click()
+                local country = splash:select('input[id=s2id_autogen1_search]')
+                country:send_text("France")
+                country:send_keys("<Return>")
+                splash:wait(0.5)
+                splash:go('https://kiliim.com/product/blue-nile-cushion/')
+                splash:wait(1.5)
                 return splash:url()
             end
             """
@@ -77,8 +77,8 @@ class HefnaSpiderSpider(scrapy.Spider):
                             args={'lua_source': self.script})
 
     def parse(self, response):
-        #inspect_response(response, self)
-        yield {'test_body': response.body_as_unicode()}
+        inspect_response(response, self)
+        #yield {'test_body': response.body_as_unicode()}
 
 
 
