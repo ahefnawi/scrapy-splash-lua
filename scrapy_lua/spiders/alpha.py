@@ -11,7 +11,7 @@ class AlphaSpider(scrapy.Spider):
     allowed_domains = ['ahmedhefnawi.com']
     start_urls = ['https://ahmedhefnawi.com']
 
-    self.LUA_SCRIPT = """
+    script = """
     function main(splash, args)
         splash:go(splash.args.url)
         splash:wait(0.5)
