@@ -15,6 +15,8 @@ SPIDER_MODULES = ['scrapy_lua.spiders']
 NEWSPIDER_MODULE = 'scrapy_lua.spiders'
 
 
+USER_AGENT = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0'
+
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'scrapy_lua (+http://www.yourdomain.com)'
 

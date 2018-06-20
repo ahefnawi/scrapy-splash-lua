@@ -140,6 +140,13 @@ class AlphaSpider(scrapy.Spider):
         local currency = splash:evaljs('document.querySelector("span.woocommerce-Price-currencySymbol").innerHTML')
         -- strip spaces
         currency = currency:gsub("%s+", "")
+
+        splash:on_response_headers(function(response)
+                local response_cookies = response.headers["Set-cookie"]
+                cookies = cookies .. ";" .. response_cookies
+                response.abort()
+            end)
+
         -- check if currency is correct
         if currency ~= "EUR" then
           splash:unlock_navigation()
@@ -149,32 +156,39 @@ class AlphaSpider(scrapy.Spider):
           local button = splash:select('button.single_add_to_cart_button')
           button:mouse_click()
           splash:wait(10)
-          -- splash:go('https://kiliim.com/checkout/')
-          -- splash:wait(10)
-          -- local select_input = splash:select('span[id=select2-chosen-1]')
-          -- select_input:mouse_click()
-          -- splash:wait(10)
-          -- local country = splash:select('input[id=s2id_autogen1_search]')
-          -- local currency_check = splash:evaljs('document.querySelector("span.woocommerce-Price-currencySymbol").innerHTML')
-          -- ok, err = country:send_text("France")
-          -- ok, err = country:send_keys("<Tab>")
-          -- splash:wait(24)
-
-          -- while currency_check =="EGP" do
-          --   splash:wait(5)
-          --   currency_check = splash:evaljs('document.querySelector("span.woocommerce-Price-currencySymbol").innerHTML'):gsub("%s+", "")
-          -- end
+          splash:go('https://kiliim.com/checkout/')
+          splash:wait(10)
+          local select_input = splash:select('span[id=select2-chosen-1]')
+          select_input:mouse_click()
+          splash:wait(10)
+          local country = splash:select('input[id=s2id_autogen1_search]')
+          local currency_check = splash:evaljs('document.querySelector("span.woocommerce-Price-currencySymbol").innerHTML')
+          ok, err = country:send_text("France")
+          ok, err = country:send_keys("<Tab>")
+          -- splash:wait(50)
+          while currency_check == "EGP" do
+            splash:wait(5)
+            currency_check = splash:evaljs('document.querySelector("span.woocommerce-Price-currencySymbol").innerHTML'):gsub("%s+", "")
+          end
           -- splash:go('https://kiliim.com/product/burgundy-scattered-stitch-cushion/')
+          -- splash:wait(10)
+          -- local shop = splash:select('ul#menu-main-menu-2>li.menu-item-24>a')
+          -- shop:mouse_click()
           -- splash:wait(10)
           -- local currency_test = splash:evaljs('document.querySelector("span.woocommerce-Price-currencySymbol").innerHTML')
         end
+
+          splash:wait(3)
+          ok,reason = splash:go('https://kiliim.com/product/burgundy-scattered-stitch-cushion/')
+          splash:wait(5)
+
         splash:wait(0.5)
         local entries = splash:history()
         local last_response = entries[#entries].response
         return {
             png = splash:png(),
             -- har = splash:har(),
-            currency = currency,
+            currency = currency_test,
             url = splash:url(),
             -- headers = last_response.headers,
             -- http_status = last_response.status,
@@ -209,7 +223,7 @@ class AlphaSpider(scrapy.Spider):
                     # 'cache_args': ['lua_source'],
                     'endpoint': 'execute',  # optional; default is render.json
                     # 'splash_url': '<url>',      # optional; overrides SPLASH_URL
-                    'slot_policy': SlotPolicy.PER_DOMAIN,
+                    'slot_policy': SlotPolicy.SINGLE_SLOT,
                     # 'splash_headers': {},       # optional; a dict with headers sent to Splash
                     # 'dont_process_response': True,  # optional, default is False
                     'dont_send_headers': False,  # optional, default is False
